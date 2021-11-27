@@ -1,39 +1,24 @@
-const express = require('express');
-const questionList = require('./questions.json');
+const express = require('express'); //states the app we need to use
+const ListofQuestions = require('./questions.json');//states where we get the questions from
 
-const app = express();
+const app = express();//the app that we are using
 
-app.use(express.static('static'));
+app.use(express.static('static'));//where the folder is in
 
-app.get('/questionsInJson', function(req,res){
-    let questionsNoAnswers = JSON.parse(JSON.stringify(questionList));
-    
-    for(i in questionsNoAnswers){
-        delete questionsNoAnswers[i].answerIndex;
-    }
-    
-    res.json(questionsNoAnswers); 
+app.get('/questionsInJson', function(response){ //reponds to the question
+    let questionsNoAnswers = JSON.parse(JSON.stringify(ListofQuestions));
+    for(i in questionsNoAnswers){ delete questionsNoAnswers[i].answerIndex;}
+    response.json(questionsNoAnswers); 
 })
 
-
-app.get('/answersInJson', function(req,res){
-
-    let qIndex = req.query.q;
-    let aIndex = req.query.a;
-    let feedback = "";
-
-    let question = questionList[qIndex];
-
-    if(question.answerIndex == aIndex){
-        feedback = "Correct! " + qIndex;
-    }
-    else{
-        feedback = "Incorrect! " + qIndex;
-    }
-
-    res.send(feedback);
-})
-
-
-
-app.listen(80);
+app.get('/answersInJson', function(request,response){
+    let questionsNoAnswers = request.query.q;//index for all the answers
+    let answerIndex = request.query.a;
+    let reply = "";
+    let question = ListofQuestions[questionsNoAnswers];
+    if(question.answerIndex == answerIndex){reply = "Correct! " + questionsNoAnswers;}//print correct if the correct answer is select
+    else{reply = "Incorrect! " + questionsNoAnswers;}//print incorrect if incorrect answer is selected
+    response.send(reply);
+}
+)
+app.listen(80);//look out for port 80
